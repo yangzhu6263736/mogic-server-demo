@@ -1,0 +1,3 @@
+[submodule "mogic"]
+	path = mogic
+	url = https://github.com/yangzhu6263736/mogic

@@ -8,13 +8,29 @@ namespace Hall\Controller;
 
 class User
 {
-    public static function test($request)
+ 
+
+    /**
+     * 登陆操作
+     *
+     * @param [type] $request
+     * @return void
+     */
+    public static function login($request)
     {
-        \Mogic\MLog::log("userController");
-        // $userService = \Service\UserService::getInstance();
-        // $userModel = new \Model\User();
-        // $userModel->test($a, $b, $request, function () use ($request) {
-        //     $request->done();
-        // });
+        \Mogic\MLog::log("HallController", "login");
+        // $userInfo = \Mogic\Server::getInstance()->memtable->get(1);
+        // print_R($userInfo);
+        $params = $request->params;
+        $userName = $params['user'];
+        $passwd = $params['passwd'];
+        $userService = \Service\UserService::getInstance();
+        $userService->doLogin($userName, $passwd, function ($err, $session) use ($request) {
+            if ($err) {
+                \Mogic\MLog::log("userService doLogin back", $err, $session);
+            }
+            $request->response->session_id = $session->session_id;
+            $request->done();
+        });
     }
 }

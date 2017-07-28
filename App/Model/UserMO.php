@@ -31,7 +31,7 @@ class UserMO
                 return \call_user_func($next, true, $db->connect_errno);
             }
             \Mogic\MLog::log("db query back", $result);
-            \call_user_func($next, false, $result);
+            \call_user_func($next, false, $result[0]);
         });
     }
 }

@@ -43,7 +43,7 @@ class UserService extends \Mogic\BaseService
             $session->userName = $userInfo['userName'];
             // $session->set('userId', $userInfo['userId']);
             // $session->set('userName', $userInfo['name']);
-            $session->pull();//推送到远端
+            $session->push();//推送到远端
             $next(false, $session);
         });
     }
@@ -67,10 +67,18 @@ class UserService extends \Mogic\BaseService
         }
     }
 
+    /**
+     * 初始化某用户数据
+     *
+     * @param [type] $userId
+     * @param [type] $next
+     * @return void
+     */
     public function initUserInfo($userId, $next)
     {
-        $userInfo = array(1, 2, 3);
-        $next(false, $userInfo);
+        $this->userMO->getUserInfoAsync($userId, function ($err, $userInfo) use ($next) {
+            $next($err, $userInfo);
+        });
     }
 
     /**

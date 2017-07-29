@@ -18,17 +18,11 @@ class Hall
      */
     public static function enter($request)
     {
-        \Mogic\MLog::log("enter");
+        \Mogic\MLog::clog("red", "Hall\Controller\hall enter");
+        \Mogic\MLog::clog(COLOR_RED, "Hall\Controller\hall enter");
         $userService = \Service\UserService::getInstance();
         $params = $request->params;
-        print_R($params);
-        $session_id = $params['session_id'];
-        $userService->sso($session_id, function ($err, $session) use ($request) {
-            if ($err) {
-                return $request->done($err);
-            }
-            $userId = $session->userId;
-        });
+ 
         $funcs = array(
             function ($params, $next) use ($request) {
                 $userService = \Service\UserService::getInstance();
@@ -36,10 +30,10 @@ class Hall
                 \Mogic\MLog::log("async test:", 1);
                 $userService->sso($session_id, function ($err, $session) use ($params, $next, $request) {
                     \Mogic\MLog::log("async test:", 2, $err, $session);
-                    var_dump($err);
                     if ($err) {
-                        return $next($err, "not login");
+                        return $next(ERROR_USER_NOT_LOGIN, "not login");
                     }
+                    $request->client->bind($session->userId);//给当前请求客户端绑定用户 绑定后服务端才能主动向客户端推送消息
                     // $userId = $session->userId;
                     $params['userId'] = $session->userId;
                     $next(false, $params);
@@ -50,7 +44,7 @@ class Hall
                 $userService = \Service\UserService::getInstance();
                 \Mogic\MLog::log("async test:", 3);
                 $userService->initUserInfo($userId, function ($err, $userInfo) use ($params, $next, $request) {
-                    \Mogic\MLog::log("async test:", 4);
+                    \Mogic\MLog::clog(COLOR_BLUE, "async test:", 4);
                     if ($err) {
                         return $next($err, 'no user');
                     }
@@ -69,5 +63,16 @@ class Hall
             }
         );
         \Mogic\Utils::asyncCalls($funcs, $params);
+    }
+
+    public function test()
+    {
+        // $a->tet($a11, function ($b11) {
+        //     $b->test($b11, fucntion($c11){
+        //         $c->test($c11, function ($d11) {
+
+        //         });
+        //     });
+        // });
     }
 }

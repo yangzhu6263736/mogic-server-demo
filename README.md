@@ -6,6 +6,6 @@
 > 
 > 给出一些例子代码：
 > 
->     git clone https://github.com/yangzhu6263736/mogapp
+>     git clone https://github.com/yangzhu6263736/mogic-server-demo
 >     git submodule init
 >     git submodule update

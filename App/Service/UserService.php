@@ -59,7 +59,8 @@ class UserService extends \Mogic\BaseService
     {
         $session = \Mogic\Session::getSession($session_id);
         if (empty($session->userId)) {
-            $session->fetch(function ($err, $session) use ($next) {
+            $session->fetch(function ($err, $session = false) use ($next) {
+                \Mogic\MLog::clog("red", $err, $session);
                 call_user_func($next, $err, $session);
             });
         } else {

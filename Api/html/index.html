@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Hello MUI</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../css/mui.min.css">
+	<!--App自定义的css-->
+	<link rel="stylesheet" type="text/css" href="../css/app.css" />
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">API列表</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-card">
+			<ul class="mui-table-view" id="routeTable">
+				<li class="mui-table-view-cell">card（圆角列表</li>
+				<li class="mui-table-view-divider">右侧无导航箭头</li>
+				<li class="mui-table-view-cell">Item 1 <span class="mui-badge mui-badge-primary">14</span></li>
+				<li class="mui-table-view-cell">Item 2 <span class="mui-badge mui-badge-success">1</span></li>
+				<li class="mui-table-view-cell">Item 3 <span class="mui-badge">5</span></li>
+				<li class="mui-table-view-divider">右侧有导航箭头</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+		                    <span class="mui-badge mui-badge-danger">15</span>
+		                    Item 1
+		                </a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+		                    <span class="mui-badge mui-badge-purple">5</span>
+		                    Item 2
+		                </a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right">
+		                    <span class="mui-badge mui-badge-warning">5</span>
+		                    Item 3
+		                </a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+<script src="../js/mui.min.js"></script>
+<script src="../js/h.min.js"></script>
+<script src="../js/req.js"></script>
+<script>
+	mui.init({
+		swipeBack: true, //启用右滑关闭功能
+		preloadPages: [
+			{
+				url: 'module.html',
+				id: 'module'
+			}
+		]
+	});
+	var module = null;
+	mui.plusReady(function () {
+		console.log("xxxx")
+		//预加载详情页
+		module = mui.preload({
+			url: 'module.html',
+			id: 'module',
+			styles: {
+				"render": "always",
+				"popGesture": "hide",
+				"bounce": "vertical",
+				"bounceBackground": "#efeff4",
+				"titleNView": titleNView
+			}
+		});
+	});
+	// mui(".mui-table-view").on('tap', '.mui-table-view-cell', function () {
+	// 	var moduleId = this.getAttribute("id");
+	// 	console.log("xxxxxx", moduleId)
+
+	// 	mui.openWindow({
+	// 		url: 'module.html',
+	// 		show: {
+	// 			autoShow: false
+	// 		},
+	// 		extras: {
+	// 			moduleId: moduleId
+	// 		}
+	// 	});
+	// 	mui.fire(module, 'getDetail', { moduleId: moduleId });
+
+	// })
+	req.indexModules({}, function (err, data) {
+		console.log(data);
+		var table = document.body.querySelector('#routeTable');
+		h("#routeTable").find('li').remove();
+		var trees = data[1]['trees'];
+		for (var module in trees) {
+			for (var i in trees[module]['Controller']) {
+				var filename = trees[module]['Controller'][i];
+				var li = getApiLi(module, filename);
+				h(li).appendTo('#routeTable');
+			}
+		}
+	});
+	
+
+	function getApiLi(module, controller) {
+		// var li = h('mui-table-view-cell')[0].clone();
+		var li = document.createElement('li');
+		li.id = module + '-' + controller;
+		li.className = "mui-table-view-cell mog-module";
+		// li.addClass("mui-table-view-cell");
+		// li.innerHTML = module + '/' + controller;
+		var url = 'module.html?m=' + module + '&c=' + controller;
+		var title = module + '/' + controller;
+		li.innerHTML = '<a class="mui-navigate-right" data-title-type="native" href="' + url + '">' + title + '</a>';
+		// var html = '<li class="mui-table-view-cell">'+mudole+'/'+controller+'</li>';
+		return li;
+	}
+
+</script>
+
+</html>

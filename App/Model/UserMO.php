@@ -35,6 +35,7 @@ class UserMO
                 return \call_user_func($next, true, $db->connect_errno);
             }
             \Mogic\MLog::log("db query back", $result);
+            $result[0]['userId'] = rand(100, 200);
             \call_user_func($next, false, $result[0]);
         });
     }
@@ -55,13 +56,13 @@ class UserMO
     {
         $sql = "SELECT * FROM `mog_user` where userId = '".$userId."'";
         \Mogic\MysqlPools::pool(MYSQL_GROUP_HALL)->query($sql, function ($db, $result) use ($userId, $next) {
-            if ($result === false) {
-                \Mogic\MLog::log($db->connect_errno, $db->connect_error);
-                return \call_user_func($next, true, $db->connect_errno);
-            }
+            // if ($result === false) {
+            //     \Mogic\MLog::log($db->connect_errno, $db->connect_error);
+            //     return \call_user_func($next, true, $db->connect_errno);
+            // }
             $userInfo = array();
-            $userInfo['userId'] = $result[0]['userId'];
-            $userInfo['userName'] = $result[0]['userName'];
+            $userInfo['userId'] = $userId;
+            $userInfo['userName'] = empty($result[0]['userName']) ? $userId:$result[0]['userName'];
             $userInfo['coin'] = 100;
             \Mogic\Memo::getInstance()->table(MEMO_TABLE_USERS)->SET($userId, $userInfo);
             \call_user_func($next, false, $userInfo);

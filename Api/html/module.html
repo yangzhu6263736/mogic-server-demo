@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Hello MUI</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+	<!--标准mui.css-->
+	<link rel="stylesheet" href="../css/mui.min.css">
+	<!--App自定义的css-->
+	<link rel="stylesheet" type="text/css" href="../css/app.css" />
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">API详情</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-card">
+			<ul class="mui-table-view" id="table">
+				<li class="mui-table-view-cell mui-collapse">
+					<a class="mui-navigate-right" href="#">文字排版</a>
+					<div class="mui-collapse-content">
+						<h1>h1. Heading</h1>
+						<h2>h2. Heading</h2>
+						<h3>h3. Heading</h3>
+						<h4>h4. Heading</h4>
+						<h5>h5. Heading</h5>
+						<h6>h6. Heading</h6>
+						<p>
+							p. 目前最接近原生App效果的框架。
+						</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+<script src="../js/mui.min.js"></script>
+<script src="../js/h.min.js"></script>
+<script src="../js/utils.js"></script>
+
+
+<script>
+	//B页面onload从服务器获取列表数据；
+	function getDetail(params) {
+		console.log(params)
+		var url = 'http://60.191.205.121:3736/api/api/queryModule';
+		mui.ajax('http://60.191.205.121:3736/api/api/queryModule?module=hall&controller=hall', {
+			data: params,
+			dataType: 'json',//服务器返回json格式数据
+			type: 'post',//HTTP请求类型
+			timeout: 10000,//超时时间设置为10秒；
+			headers: { 'Content-Type': 'application/json' },
+			success: function (data) {
+				//服务器返回响应，根据响应结果，分析是否登录成功；
+				console.log(data);
+				
+			},
+			error: function (xhr, type, errorThrown) {
+				//异常处理；
+				console.log(type);
+			}
+		});
+	}
+
+	function getOneCell(cla, med){
+		// var li = h('mui-table-view-cell')[0].clone();
+		var li = document.createElement('li');
+		li.id = module + '-' + controller;
+		li.className = "mui-table-view-cell mui-collapse";
+		var url = 'module.html?m=' + module + '&c=' + controller;
+		var title = module + '/' + controller;
+		li.innerHTML = '<a class="mui-navigate-right" data-title-type="native" href="' + url + '">' + title + '</a>';
+		// var html = '<li class="mui-table-view-cell">'+mudole+'/'+controller+'</li>';
+		return li;
+	}
+	window.onload = function () {
+		var m = utils.GetQueryString("m");
+		var c = utils.GetQueryString("c");
+		var params = {
+			'm': utils.GetQueryString("m"),
+			'c': utils.GetQueryString("c")
+		}
+		getDetail(params);
+		console.log(m);
+		console.log(c);
+		// console.log("dsfsfdsdf");
+		//从服务器获取数据
+		//业务数据获取完毕，并已插入当前页面DOM；
+		//注意：若为ajax请求，则需将如下代码放在处理完ajax响应数据之后；
+		mui.ready(function () {
+			// var self = plus.webview.currentWebview();
+			// 或 var self = plus.webview.getWebviewById('new');
+			// console.log(webview.moduleId);
+			console.log("extras:" + self.moduleId);
+		})
+
+	}
+
+</script>
+
+</html>
